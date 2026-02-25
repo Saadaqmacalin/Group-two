@@ -3,7 +3,6 @@ const Category = require('../models/category');
 
 const createCategory = async (req, res) => {
   const { name, description } = req.body;
-  console.log('Creating category:', req.body);
 
   try {
     const categoryExists = await Category.findOne({ name });
@@ -20,7 +19,6 @@ const createCategory = async (req, res) => {
 
     res.status(201).json(category);
   } catch (error) {
-    console.error('Error creating category:', error);
     res.status(500).json({ message: error.message });
   }
 };
@@ -66,7 +64,6 @@ const updateCategory = async (req, res) => {
       res.status(404).json({ message: 'Category not found' });
     }
   } catch (error) {
-    console.error('Error updating category:', error);
     res.status(500).json({ message: error.message });
   }
 };

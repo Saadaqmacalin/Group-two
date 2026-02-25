@@ -4,7 +4,8 @@ const {
   sendMessage,
   getMessages,
   getMessageById,
-  deleteMessage
+  deleteMessage,
+  updateMessageStatus
 } = require('../controllers/messageController');
 const { protect, admin } = require('../middleware/authMiddleware');
 
@@ -14,6 +15,7 @@ router.route('/')
 
 router.route('/:id')
   .get(protect, admin, getMessageById)
+  .put(protect, admin, updateMessageStatus)
   .delete(protect, admin, deleteMessage);
 
 module.exports = router;

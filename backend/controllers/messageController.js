@@ -60,9 +60,26 @@ const deleteMessage = async (req, res) => {
   }
 };
 
+const updateMessageStatus = async (req, res) => {
+  try {
+    const message = await Message.findById(req.params.id);
+
+    if (message) {
+      message.isRead = req.body.isRead !== undefined ? req.body.isRead : message.isRead;
+      const updatedMessage = await message.save();
+      res.json(updatedMessage);
+    } else {
+      res.status(404).json({ message: 'Message not found' });
+    }
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
 module.exports = {
   sendMessage,
   getMessages,
   getMessageById,
-  deleteMessage
+  deleteMessage,
+  updateMessageStatus
 };
