@@ -1,4 +1,5 @@
 const Order = require('../models/orders');
+const Product = require('../models/products');
 
 
 const createOrder = async (req, res) => {
@@ -17,6 +18,19 @@ const createOrder = async (req, res) => {
   }
 
   try {
+    // 1. Verify stock availability for all items first
+    for (const item of orderItems) {
+      const product = await Product.findById(item.product);
+      if (!product) {
+        res.status(404).json({ message: `Product ${item.product} not found` });
+        return;
+      }
+      if (product.countInStock < item.quantity) {
+        res.status(400).json({ message: `Insufficient stock for ${product.name}` });
+        return;
+      }
+    }
+
     const order = new Order({
       customer,
       orderItems,
@@ -27,6 +41,14 @@ const createOrder = async (req, res) => {
     });
 
     const createdOrder = await order.save();
+
+    // 2. Reduce stock after successful order creation
+    for (const item of orderItems) {
+      const product = await Product.findById(item.product);
+      product.countInStock -= item.quantity;
+      await product.save();
+    }
+
     res.status(201).json(createdOrder);
   } catch (error) {
     res.status(400).json({ message: error.message });

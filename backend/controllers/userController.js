@@ -68,15 +68,14 @@ const loginUser = async (req, res) => {
 
 
 const getUserProfile = async (req, res) => {
-  const user = await User.findById(req.user._id);
-
-  if (user) {
+  // req.user is already fetched by the protect middleware
+  if (req.user) {
     res.json({
-      _id: user._id,
-      name: user.name,
-      email: user.email,
-      role: user.role,
-      phoneNumber: user.phoneNumber
+      _id: req.user._id,
+      name: req.user.name,
+      email: req.user.email,
+      role: req.user.role,
+      phoneNumber: req.user.phoneNumber
     });
   } else {
     res.status(404).json({ message: 'User not found' });
@@ -85,7 +84,7 @@ const getUserProfile = async (req, res) => {
 
 
 const updateUserProfile = async (req, res) => {
-  const user = await User.findById(req.user._id);
+  const user = req.user;
 
   if (user) {
     user.name = req.body.name || user.name;
