@@ -11,8 +11,14 @@ import {
   AlertCircle
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useLocation } from 'react-router-dom';
 
 const Categories = () => {
+  const location = useLocation();
+  const isFarmer = location.pathname.startsWith('/farmer');
+  const basePath = isFarmer ? '/farmer/categories' : '/categories';
+  const themeColor = isFarmer ? 'emerald' : 'blue';
+  
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -58,8 +64,8 @@ const Categories = () => {
           <p className="text-slate-500 text-sm">Organize your products with categories.</p>
         </div>
         <Link 
-          to="/categories/new"
-          className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2.5 rounded-xl font-semibold shadow-sm transition-all active:scale-95"
+          to={`${basePath}/new`}
+          className={`flex items-center gap-2 bg-${themeColor}-600 hover:bg-${themeColor}-700 text-white px-4 py-2.5 rounded-xl font-semibold shadow-sm transition-all active:scale-95`}
         >
           <Plus className="w-5 h-5" />
           Add Category
@@ -75,7 +81,7 @@ const Categories = () => {
               placeholder="Search categories..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+              className={`w-full pl-10 pr-4 py-2 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-${themeColor}-500 focus:border-transparent transition-all`}
             />
           </div>
         </div>
@@ -83,14 +89,14 @@ const Categories = () => {
         <div className="overflow-x-auto">
           {loading ? (
             <div className="py-20 flex flex-col items-center justify-center text-slate-500 gap-3">
-              <Loader2 className="w-10 h-10 animate-spin text-blue-600" />
+              <Loader2 className={`w-10 h-10 animate-spin text-${themeColor}-600`} />
               <p className="font-medium">Loading categories...</p>
             </div>
           ) : error ? (
             <div className="py-20 flex flex-col items-center justify-center text-red-500 gap-3">
               <AlertCircle className="w-10 h-10" />
               <p className="font-medium">{error}</p>
-              <button onClick={fetchCategories} className="text-blue-600 underline text-sm">Try again</button>
+              <button onClick={fetchCategories} className={`text-${themeColor}-600 underline text-sm`}>Try again</button>
             </div>
           ) : filteredCategories.length === 0 ? (
             <div className="py-20 flex flex-col items-center justify-center text-slate-400 gap-3">
@@ -117,8 +123,8 @@ const Categories = () => {
                     >
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-4">
-                          <div className="w-10 h-10 rounded-lg bg-blue-50 flex-shrink-0 border border-blue-100 flex items-center justify-center">
-                            <Layers className="w-5 h-5 text-blue-600" />
+                          <div className={`w-10 h-10 rounded-lg bg-${themeColor}-50 flex-shrink-0 border border-${themeColor}-100 flex items-center justify-center`}>
+                            <Layers className={`w-5 h-5 text-${themeColor}-600`} />
                           </div>
                           <div>
                             <p className="font-semibold text-slate-900">{category.name}</p>
@@ -129,8 +135,8 @@ const Categories = () => {
                       <td className="px-6 py-4 text-right">
                         <div className="flex justify-end gap-2 transition-opacity">
                           <Link 
-                            to={`/categories/edit/${category._id}`}
-                            className="p-2 text-slate-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all"
+                            to={`${basePath}/edit/${category._id}`}
+                            className={`p-2 text-slate-600 hover:text-${themeColor}-600 hover:bg-${themeColor}-50 rounded-lg transition-all`}
                           >
                             <Edit2 className="w-4 h-4" />
                           </Link>

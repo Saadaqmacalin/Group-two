@@ -8,7 +8,6 @@ import {
   Trash2, 
   Package, 
   Layers, 
-  MoreVertical,
   Loader2,
   AlertCircle
 } from 'lucide-react';
@@ -23,6 +22,7 @@ const Products = () => {
   const fetchProducts = async () => {
     try {
       setLoading(true);
+      setError('');
       const { data } = await api.get('/products');
       setProducts(data);
     } catch (err) {

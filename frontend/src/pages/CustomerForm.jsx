@@ -12,7 +12,6 @@ import {
   MapPin,
   Save
 } from 'lucide-react';
-import { motion } from 'framer-motion';
 
 const CustomerForm = () => {
   const { id } = useParams();

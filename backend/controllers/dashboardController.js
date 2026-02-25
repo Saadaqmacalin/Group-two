@@ -2,12 +2,14 @@ const Product = require('../models/products');
 const Customer = require('../models/customers');
 const Order = require('../models/orders');
 const Sale = require('../models/selles');
+const Farmer = require('../models/farmer');
 
 const getDashboardStats = async (req, res) => {
   try {
     const totalProducts = await Product.countDocuments();
     const totalCustomers = await Customer.countDocuments();
     const totalOrders = await Order.countDocuments();
+    const totalFarmers = await Farmer.countDocuments();
     
     const salesSummary = await Sale.aggregate([
       {
@@ -22,6 +24,7 @@ const getDashboardStats = async (req, res) => {
     res.json({
       products: totalProducts,
       customers: totalCustomers,
+      farmers: totalFarmers,
       orders: totalOrders,
       sales: salesSummary[0] || { totalRevenue: 0, count: 0 }
     });

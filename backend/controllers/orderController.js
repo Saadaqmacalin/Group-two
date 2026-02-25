@@ -118,10 +118,30 @@ const deleteOrder = async (req, res) => {
   }
 };
 
+const getMyOrders = async (req, res) => {
+  try {
+    // 1. Find the customer record(s) associated with this user's email
+    const customer = await require('../models/customers').findOne({ email: req.user.email });
+    
+    if (!customer) {
+      return res.json([]); // No orders yet
+    }
+
+    const orders = await Order.find({ customer: customer._id })
+      .populate('orderItems.product', 'name price images')
+      .sort({ createdAt: -1 });
+      
+    res.json(orders);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 module.exports = {
   createOrder,
   getOrders,
   getOrderById,
   updateOrderStatus,
-  deleteOrder
+  deleteOrder,
+  getMyOrders
 };

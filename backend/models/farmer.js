@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 
-const userSchema = new mongoose.Schema({
+const farmerSchema = new mongoose.Schema({
   name: {
     type: String,
     required: [true, 'Please add a name'],
@@ -17,38 +17,46 @@ const userSchema = new mongoose.Schema({
   },
   password: {
     type: String,
-    required: [true, 'Please add  password'],
+    required: [true, 'Please add a password'],
     minlength: 6,
     select: false
   },
-  role: {
+  
+  location: {
     type: String,
-    enum: ['admin', 'staff', 'customer'],
-    default: 'customer'
+    required: [true, 'Please add your farm location'],
+    trim: true
   },
   phoneNumber: {
     type: String,
+    required: [true, 'Please add a phone number'],
     trim: true,
-    unique: true,
-    sparse: true
+    unique: true
   },
- 
+  bio: {
+    type: String,
+    maxlength: 500
+  },
+  role: {
+    type: String,
+    default: 'farmer'
+  }
 }, {
   timestamps: true
 });
 
 // Hash password before saving
-userSchema.pre('save', async function() {
+farmerSchema.pre('save', async function(next) {
   if (!this.isModified('password')) {
-    return;
+    next();
   }
   const salt = await bcrypt.genSalt(10);
   this.password = await bcrypt.hash(this.password, salt);
 });
 
 // Method to compare password
-userSchema.methods.matchPassword = async function(enteredPassword) {
+farmerSchema.methods.matchPassword = async function(enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password);
 };
 
-module.exports = mongoose.model('User', userSchema);
+module.exports = mongoose.model('Farmer', farmerSchema);

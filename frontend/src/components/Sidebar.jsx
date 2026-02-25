@@ -10,7 +10,8 @@ import {
   UsersRound, 
   CreditCard, 
   MessageSquare,
-  ChevronRight
+  ChevronRight,
+  Tractor
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
@@ -23,6 +24,7 @@ const Sidebar = () => {
     { name: 'Categories', icon: Layers, path: '/categories' },
     { name: 'Orders', icon: ShoppingCart, path: '/orders' },
     { name: 'Sales', icon: TrendingUp, path: '/sales' },
+    { name: 'Farmers', icon: Tractor, path: '/farmers' },
     { name: 'Customers', icon: Users, path: '/customers' },
     { name: 'Payments', icon: CreditCard, path: '/payments' },
     { name: 'Messages', icon: MessageSquare, path: '/messages' },

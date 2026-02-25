@@ -17,16 +17,19 @@ const productSchema = new mongoose.Schema({
     min: 0
   },
 
-  images: [
-    {
-      type: String, // URLs to images (Cloudinary, local, etc.)
-      required: true
-    }
-  ],
+  images: {
+    type: [String],
+    default: []
+  },
   category: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Category',
     required: [true, 'Please select a category']
+  },
+  farmer: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Farmer',
+    required: false // Optional, can be null for platform-owned items
   },
 
   isAvailable: {

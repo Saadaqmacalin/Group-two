@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useParams, Link } from 'react-router-dom';
+import { useNavigate, useParams, Link, useLocation } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import api from '../services/api';
 import { 
@@ -15,6 +15,10 @@ const CategoryForm = () => {
   const { id } = useParams();
   const isEdit = Boolean(id);
   const navigate = useNavigate();
+  const location = useLocation();
+  const isFarmer = location.pathname.startsWith('/farmer');
+  const basePath = isFarmer ? '/farmer/categories' : '/categories';
+  const themeColor = isFarmer ? 'emerald' : 'blue';
   const [loading, setLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(isEdit);
   const { register, handleSubmit, setValue, formState: { errors } } = useForm();
@@ -47,7 +51,7 @@ const CategoryForm = () => {
         await api.post('/categories', data);
       }
       
-      navigate('/categories');
+      navigate(basePath);
     } catch (err) {
       alert(err.response?.data?.message || 'Something went wrong');
     } finally {
@@ -58,7 +62,7 @@ const CategoryForm = () => {
   if (initialLoading) {
     return (
       <div className="h-full flex items-center justify-center">
-        <Loader2 className="w-10 h-10 text-blue-600 animate-spin" />
+        <Loader2 className={`w-10 h-10 text-${themeColor}-600 animate-spin`} />
       </div>
     );
   }
@@ -67,7 +71,7 @@ const CategoryForm = () => {
     <div className="max-w-2xl mx-auto space-y-6">
       <div className="flex items-center gap-4">
         <button 
-          onClick={() => navigate('/categories')}
+          onClick={() => navigate(basePath)}
           className="p-2 hover:bg-slate-100 rounded-full transition-colors"
         >
           <ArrowLeft className="w-5 h-5 text-slate-600" />
@@ -87,7 +91,7 @@ const CategoryForm = () => {
             <input 
               {...register('name', { required: 'Category name is required' })}
               placeholder="Ex: Electronics, Fashion, etc."
-              className={`w-full px-4 py-2.5 border ${errors.name ? 'border-red-500' : 'border-slate-300'} rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500`}
+              className={`w-full px-4 py-2.5 border ${errors.name ? 'border-red-500' : 'border-slate-300'} rounded-xl focus:outline-none focus:ring-2 focus:ring-${themeColor}-500`}
             />
             {errors.name && <p className="mt-1 text-xs text-red-500">{errors.name.message}</p>}
           </div>
@@ -100,7 +104,7 @@ const CategoryForm = () => {
               {...register('description', { required: 'Description is required' })}
               rows="4"
               placeholder="Write a brief description of this category..."
-              className={`w-full px-4 py-2.5 border ${errors.description ? 'border-red-500' : 'border-slate-300'} rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500`}
+              className={`w-full px-4 py-2.5 border ${errors.description ? 'border-red-500' : 'border-slate-300'} rounded-xl focus:outline-none focus:ring-2 focus:ring-${themeColor}-500`}
             />
             {errors.description && <p className="mt-1 text-xs text-red-500">{errors.description.message}</p>}
           </div>
@@ -110,13 +114,13 @@ const CategoryForm = () => {
           <button
             type="submit"
             disabled={loading}
-            className="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-bold flex items-center justify-center gap-2 shadow-lg shadow-blue-200 transition-all active:scale-95 disabled:opacity-70"
+            className={`flex-1 bg-${themeColor}-600 hover:bg-${themeColor}-700 text-white px-6 py-3 rounded-xl font-bold flex items-center justify-center gap-2 shadow-lg shadow-${themeColor}-200 transition-all active:scale-95 disabled:opacity-70`}
           >
             {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
             {isEdit ? 'Update Category' : 'Create Category'}
           </button>
           <Link 
-            to="/categories"
+            to={basePath}
             className="px-6 py-3 border border-slate-200 rounded-xl font-bold text-slate-600 hover:bg-slate-50 transition-colors"
           >
             Cancel

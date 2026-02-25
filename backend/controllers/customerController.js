@@ -1,18 +1,27 @@
 const Customer = require('../models/customers');
+const User = require('../models/user');
 
 
 const createCustomer = async (req, res) => {
   const { name, email, phoneNumber, address, city } = req.body;
 
   try {
-    const customerExists = await Customer.findOne({ email });
+    // Check if customer exists by email OR phone
+    let customer = await Customer.findOne({ 
+      $or: [{ email }, { phoneNumber }] 
+    });
 
-    if (customerExists) {
-      return res.status(400).json({ message: 'Customer already exists' });
+    if (customer) {
+      // Update existing customer info if provided
+      customer.name = name || customer.name;
+      customer.address = address || customer.address;
+      customer.city = city || customer.city;
+      await customer.save();
+      return res.status(200).json(customer);
     }
 
-    // Customer Waxa lagu diwan galina Name, Email, PhoneNumber, address, City
-    const customer = await Customer.create({
+    // Create new customer if doesn't exist
+    customer = await Customer.create({
       name,
       email,
       phoneNumber,
@@ -29,7 +38,53 @@ const createCustomer = async (req, res) => {
 
 const getCustomers = async (req, res) => {
   try {
-    const customers = await Customer.find({});
+    // 1. Get all checkout-only customers
+    const guestCustomers = await Customer.find({});
+    
+    // 2. Get all registered users with 'customer' role
+    const registeredCustomers = await User.find({ role: 'customer' });
+
+    // 3. Merge and deduplicate by email
+    const allCustomersMap = new Map();
+
+    // Add registered users first (they usually have more info like phone)
+    registeredCustomers.forEach(u => {
+      allCustomersMap.set(u.email.toLowerCase(), {
+        _id: u._id,
+        name: u.name,
+        email: u.email,
+        phoneNumber: u.phoneNumber,
+        city: 'N/A', // Users don't have city/address in their model yet
+        address: 'Registered User',
+        type: 'Registered'
+      });
+    });
+
+    // Add checkout guests (or update existing if they checked out)
+    guestCustomers.forEach(c => {
+      const email = c.email.toLowerCase();
+      if (allCustomersMap.has(email)) {
+        // Update with shipping info if available
+        const existing = allCustomersMap.get(email);
+        allCustomersMap.set(email, {
+          ...existing,
+          city: c.city || existing.city,
+          address: c.address || existing.address,
+        });
+      } else {
+        allCustomersMap.set(email, {
+          _id: c._id,
+          name: c.name,
+          email: c.email,
+          phoneNumber: c.phoneNumber,
+          city: c.city,
+          address: c.address,
+          type: 'Guest'
+        });
+      }
+    });
+
+    const customers = Array.from(allCustomersMap.values());
     res.json(customers);
   } catch (error) {
     res.status(500).json({ message: error.message });

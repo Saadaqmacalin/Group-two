@@ -27,7 +27,7 @@ const Customers = () => {
       const { data } = await api.get('/customers');
       setCustomers(data);
     } catch (err) {
-      setError('Failed to load customers');
+      setError(err.response?.data?.message || 'Failed to load customers');
       console.error(err);
     } finally {
       setLoading(false);
@@ -92,10 +92,14 @@ const Customers = () => {
               <p className="font-medium">Loading customers...</p>
             </div>
           ) : error ? (
-            <div className="py-20 flex flex-col items-center justify-center text-red-500 gap-3">
+            <div className="py-20 flex flex-col items-center justify-center text-rose-500 gap-3 text-center px-4">
               <AlertCircle className="w-10 h-10" />
-              <p className="font-medium">{error}</p>
-              <button onClick={fetchCustomers} className="text-blue-600 underline text-sm">Try again</button>
+              <p className="font-black uppercase tracking-tight">{error}</p>
+              <p className="text-xs text-slate-400 max-w-sm">
+                Check that you are logged in with an Admin account. 
+                If you are a Farmer or a Customer, you may not have access to this list.
+              </p>
+              <button onClick={fetchCustomers} className="mt-2 text-blue-600 font-bold hover:underline text-sm">Try again</button>
             </div>
           ) : filteredCustomers.length === 0 ? (
             <div className="py-20 flex flex-col items-center justify-center text-slate-400 gap-3">
@@ -109,6 +113,7 @@ const Customers = () => {
                   <th className="px-6 py-4 font-semibold">Customer</th>
                   <th className="px-6 py-4 font-semibold">Contact</th>
                   <th className="px-6 py-4 font-semibold">Location</th>
+                  <th className="px-6 py-4 font-semibold">Type</th>
                   <th className="px-6 py-4 font-semibold text-right">Actions</th>
                 </tr>
               </thead>
@@ -124,12 +129,14 @@ const Customers = () => {
                     >
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-4">
-                          <div className="w-10 h-10 rounded-full bg-blue-50 flex-shrink-0 border border-blue-100 flex items-center justify-center text-blue-600 font-bold">
+                          <div className={`w-10 h-10 rounded-full flex-shrink-0 border flex items-center justify-center font-bold ${
+                            customer.type === 'Registered' ? 'bg-emerald-50 border-emerald-100 text-emerald-600' : 'bg-blue-50 border-blue-100 text-blue-600'
+                          }`}>
                             {customer.name.charAt(0).toUpperCase()}
                           </div>
                           <div>
                             <p className="font-semibold text-slate-900">{customer.name}</p>
-                            <p className="text-[10px] text-slate-400 font-mono">ID: {customer._id.slice(-6).toUpperCase()}</p>
+                            <p className="text-[10px] text-slate-400 font-mono italic">{customer._id ? `ID: ${customer._id.slice(-6).toUpperCase()}` : 'NEW'}</p>
                           </div>
                         </div>
                       </td>
@@ -141,15 +148,24 @@ const Customers = () => {
                           </div>
                           <div className="flex items-center gap-1.5 text-xs text-slate-600">
                             <Phone className="w-3.5 h-3.5 text-slate-400" />
-                            {customer.phoneNumber}
+                            {customer.phoneNumber || 'N/A'}
                           </div>
                         </div>
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-1.5 text-xs text-slate-600">
                           <MapPin className="w-3.5 h-3.5 text-slate-400" />
-                          <span className="truncate max-w-[150px]">{customer.city}, {customer.address}</span>
+                          <span className="truncate max-w-[150px]">{customer.city || 'N/A'}, {customer.address}</span>
                         </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider border ${
+                          customer.type === 'Registered' 
+                          ? 'bg-emerald-100 text-emerald-700 border-emerald-200' 
+                          : 'bg-blue-100 text-blue-700 border-blue-200'
+                        }`}>
+                          {customer.type || 'Guest'}
+                        </span>
                       </td>
                       <td className="px-6 py-4 text-right">
                         <div className="flex justify-end gap-2 transition-opacity">

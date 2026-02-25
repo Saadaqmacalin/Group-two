@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
 import { motion } from 'framer-motion';
-import { Package, Users, ShoppingCart, DollarSign, LogOut, Loader2 } from 'lucide-react';
+import { Package, Users, ShoppingCart, DollarSign, LogOut, Loader2, Tractor } from 'lucide-react';
 
 const Dashboard = () => {
   const { user, logout } = useAuth();
@@ -47,6 +47,13 @@ const Dashboard = () => {
       bg: 'bg-amber-50' 
     },
     { 
+      label: 'Total Farmers', 
+      value: stats ? stats.farmers.toString() : '0', 
+      icon: Tractor, 
+      color: 'text-emerald-600', 
+      bg: 'bg-emerald-50' 
+    },
+    { 
       label: 'Total Customers', 
       value: stats ? stats.customers.toString() : '0', 
       icon: Users, 
@@ -79,7 +86,7 @@ const Dashboard = () => {
         </button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-10">
         {statCards.map((stat, index) => (
           <motion.div
             key={stat.label}

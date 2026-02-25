@@ -12,6 +12,7 @@ const paymentRouter = require('./routers/paymentRouter');
 const messageRouter = require('./routers/messageRouter');
 const salesRouter = require('./routers/salesRouter');
 const dashboardRouter = require('./routers/dashboardRouter');
+const farmerRouter = require('./routers/farmerRouter');
 
 const app = express();
 
@@ -29,6 +30,7 @@ app.use('/api/payments', paymentRouter);
 app.use('/api/messages', messageRouter);
 app.use('/api/sales', salesRouter);
 app.use('/api/dashboard', dashboardRouter);
+app.use('/api/farmers', farmerRouter);
 
 app.get('/', (req, res) => {
   res.send('API is running...');

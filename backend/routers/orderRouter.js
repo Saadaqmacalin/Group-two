@@ -5,13 +5,17 @@ const {
   getOrders,
   getOrderById,
   updateOrderStatus,
-  deleteOrder
+  deleteOrder,
+  getMyOrders
 } = require('../controllers/orderController');
 const { protect, admin } = require('../middleware/authMiddleware');
 
 router.route('/')
   .get(protect, admin, getOrders)
-  .post(protect, admin, createOrder);
+  .post(protect, createOrder);
+
+router.route('/myorders')
+  .get(protect, getMyOrders);
 
 router.route('/:id')
   .get(protect, admin, getOrderById)

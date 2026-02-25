@@ -7,15 +7,15 @@ const {
   updateCategory,
   deleteCategory
 } = require('../controllers/categoryController');
-const { protect, admin, staff } = require('../middleware/authMiddleware');
+const { protect, admin, staff, staffOrFarmer } = require('../middleware/authMiddleware');
 
 router.route('/')
   .get(getCategories)
-  .post(protect, staff, createCategory);
+  .post(staffOrFarmer, createCategory);
 
 router.route('/:id')
   .get(getCategoryById)
-  .put(protect, staff, updateCategory)
-  .delete(protect, staff, deleteCategory);
+  .put(staffOrFarmer, updateCategory)
+  .delete(staffOrFarmer, deleteCategory);
 
 module.exports = router;

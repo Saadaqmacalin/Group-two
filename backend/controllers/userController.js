@@ -11,6 +11,7 @@ const generateToken = (id) => {
 
 const registerUser = async (req, res) => {
   const { name, email, password, phoneNumber, role } = req.body;
+  console.log(`[AUTH] Registration attempt: ${email} (${role})`);
 
   try {
     const userExists = await User.findOne({ email });
@@ -47,6 +48,7 @@ const registerUser = async (req, res) => {
 
 const loginUser = async (req, res) => {
   const { email, password } = req.body;
+  console.log(`[AUTH] Login attempt: ${email}`);
 
   try {
     const user = await User.findOne({ email }).select('+password');

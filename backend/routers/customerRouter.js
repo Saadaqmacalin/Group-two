@@ -7,15 +7,15 @@ const {
   updateCustomer,
   deleteCustomer
 } = require('../controllers/customerController');
-const { protect, admin } = require('../middleware/authMiddleware');
+const { protect, admin, staff } = require('../middleware/authMiddleware');
 
 router.route('/')
-  .get(protect, admin, getCustomers)
-  .post(protect, admin, createCustomer);
+  .get(protect, staff, getCustomers)
+  .post(protect, createCustomer);
 
 router.route('/:id')
-  .get(protect, admin, getCustomerById)
-  .put(protect, admin, updateCustomer)
-  .delete(protect, admin, deleteCustomer);
+  .get(protect, staff, getCustomerById)
+  .put(protect, staff, updateCustomer)
+  .delete(protect, admin, deleteCustomer); // Keep delete restricted to admin
 
 module.exports = router;

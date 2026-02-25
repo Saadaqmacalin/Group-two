@@ -52,7 +52,7 @@ const Orders = () => {
     }
   };
 
-  const handeUpdatePaymentStatus = async (orderId, newStatus) => {
+  const handleUpdatePaymentStatus = async (orderId, newStatus) => {
     try {
       await api.put(`/orders/${orderId}/status`, { paymentStatus: newStatus });
       setOrders(orders.map(o => o._id === orderId ? { ...o, paymentStatus: newStatus } : o));
@@ -287,7 +287,7 @@ const Orders = () => {
                       </div>
                       <select 
                         value={selectedOrder.paymentStatus}
-                        onChange={(e) => handeUpdatePaymentStatus(selectedOrder._id, e.target.value)}
+                        onChange={(e) => handleUpdatePaymentStatus(selectedOrder._id, e.target.value)}
                         className="bg-transparent font-bold text-slate-900 border-none p-0 focus:ring-0 cursor-pointer"
                       >
                         {['Paid', 'Unpaid'].map(s => (
