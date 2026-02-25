@@ -8,9 +8,7 @@ const generateToken = (id) => {
   });
 };
 
-// @desc    Register new user
-// @route   POST /api/users/register
-// @access  Public
+
 const registerUser = async (req, res) => {
   const { name, email, password, phoneNumber, role } = req.body;
 
@@ -45,9 +43,7 @@ const registerUser = async (req, res) => {
   }
 };
 
-// @desc    Authenticate a user
-// @route   POST /api/users/login
-// @access  Public
+
 const loginUser = async (req, res) => {
   const { email, password } = req.body;
 
@@ -70,9 +66,7 @@ const loginUser = async (req, res) => {
   }
 };
 
-// @desc    Get user profile
-// @route   GET /api/users/profile
-// @access  Private
+
 const getUserProfile = async (req, res) => {
   const user = await User.findById(req.user._id);
 
@@ -89,9 +83,7 @@ const getUserProfile = async (req, res) => {
   }
 };
 
-// @desc    Update user profile
-// @route   PUT /api/users/profile
-// @access  Private
+
 const updateUserProfile = async (req, res) => {
   const user = await User.findById(req.user._id);
 
@@ -119,17 +111,12 @@ const updateUserProfile = async (req, res) => {
   }
 };
 
-// @desc    Get all users
-// @route   GET /api/users
-// @access  Private/Admin
 const getUsers = async (req, res) => {
   const users = await User.find({});
   res.json(users);
 };
 
-// @desc    Delete user
-// @route   DELETE /api/users/:id
-// @access  Private/Admin
+
 const deleteUser = async (req, res) => {
   const user = await User.findById(req.params.id);
 

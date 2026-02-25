@@ -1,8 +1,6 @@
 const Order = require('../models/orders');
 
-// @desc    Create new order
-// @route   POST /api/orders
-// @access  Private/Admin
+
 const createOrder = async (req, res) => {
   const {
     customer,
@@ -35,9 +33,6 @@ const createOrder = async (req, res) => {
   }
 };
 
-// @desc    Get all orders
-// @route   GET /api/orders
-// @access  Private/Admin
 const getOrders = async (req, res) => {
   try {
     const orders = await Order.find({})
@@ -49,9 +44,7 @@ const getOrders = async (req, res) => {
   }
 };
 
-// @desc    Get order by ID
-// @route   GET /api/orders/:id
-// @access  Private/Admin
+
 const getOrderById = async (req, res) => {
   try {
     const order = await Order.findById(req.params.id)
@@ -68,9 +61,7 @@ const getOrderById = async (req, res) => {
   }
 };
 
-// @desc    Update order status
-// @route   PUT /api/orders/:id/status
-// @access  Private/Admin
+
 const updateOrderStatus = async (req, res) => {
   try {
     const order = await Order.findById(req.params.id);
@@ -89,9 +80,7 @@ const updateOrderStatus = async (req, res) => {
   }
 };
 
-// @desc    Delete order
-// @route   DELETE /api/orders/:id
-// @access  Private/Admin
+
 const deleteOrder = async (req, res) => {
   try {
     const order = await Order.findById(req.params.id);

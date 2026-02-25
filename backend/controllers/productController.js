@@ -1,8 +1,6 @@
 const Product = require('../models/products');
 
-// @desc    Create a product
-// @route   POST /api/products
-// @access  Private/Admin
+
 const createProduct = async (req, res) => {
   const {
     name,
@@ -29,9 +27,7 @@ const createProduct = async (req, res) => {
   }
 };
 
-// @desc    Get all products
-// @route   GET /api/products
-// @access  Public
+
 const getProducts = async (req, res) => {
   const { category, keyword } = req.query;
   let query = {};
@@ -52,9 +48,7 @@ const getProducts = async (req, res) => {
   }
 };
 
-// @desc    Get product by ID
-// @route   GET /api/products/:id
-// @access  Public
+
 const getProductById = async (req, res) => {
   try {
     const product = await Product.findById(req.params.id).populate('category', 'name');
@@ -69,9 +63,7 @@ const getProductById = async (req, res) => {
   }
 };
 
-// @desc    Update a product
-// @route   PUT /api/products/:id
-// @access  Private/Admin
+
 const updateProduct = async (req, res) => {
   const {
     name,
@@ -105,9 +97,7 @@ const updateProduct = async (req, res) => {
   }
 };
 
-// @desc    Delete a product
-// @route   DELETE /api/products/:id
-// @access  Private/Admin
+
 const deleteProduct = async (req, res) => {
   try {
     const product = await Product.findById(req.params.id);

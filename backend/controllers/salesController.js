@@ -1,9 +1,7 @@
 const Sale = require('../models/selles');
 const Product = require('../models/products');
 
-// @desc    Add a sale record
-// @route   POST /api/sales
-// @access  Private/Admin
+
 const addSale = async (req, res) => {
   const { product, quantity, totalAmount, customer } = req.body;
 
@@ -28,9 +26,7 @@ const addSale = async (req, res) => {
   }
 };
 
-// @desc    Get all sales
-// @route   GET /api/sales
-// @access  Private/Admin
+
 const getSales = async (req, res) => {
   try {
     const sales = await Sale.find({})
@@ -42,9 +38,7 @@ const getSales = async (req, res) => {
   }
 };
 
-// @desc    Get sales summary
-// @route   GET /api/sales/summary
-// @access  Private/Admin
+
 const getSalesSummary = async (req, res) => {
   try {
     const totalSales = await Sale.aggregate([

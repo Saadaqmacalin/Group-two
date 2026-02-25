@@ -1,8 +1,6 @@
 const Customer = require('../models/customers');
 
-// @desc    Create a customer
-// @route   POST /api/customers
-// @access  Private/Admin
+
 const createCustomer = async (req, res) => {
   const { name, email, phoneNumber, address, city } = req.body;
 
@@ -27,9 +25,7 @@ const createCustomer = async (req, res) => {
   }
 };
 
-// @desc    Get all customers
-// @route   GET /api/customers
-// @access  Private/Admin
+
 const getCustomers = async (req, res) => {
   try {
     const customers = await Customer.find({});
@@ -39,9 +35,7 @@ const getCustomers = async (req, res) => {
   }
 };
 
-// @desc    Get customer by ID
-// @route   GET /api/customers/:id
-// @access  Private/Admin
+
 const getCustomerById = async (req, res) => {
   try {
     const customer = await Customer.findById(req.params.id);
@@ -56,9 +50,6 @@ const getCustomerById = async (req, res) => {
   }
 };
 
-// @desc    Update a customer
-// @route   PUT /api/customers/:id
-// @access  Private/Admin
 const updateCustomer = async (req, res) => {
   try {
     const customer = await Customer.findById(req.params.id);
@@ -80,9 +71,7 @@ const updateCustomer = async (req, res) => {
   }
 };
 
-// @desc    Delete a customer
-// @route   DELETE /api/customers/:id
-// @access  Private/Admin
+
 const deleteCustomer = async (req, res) => {
   try {
     const customer = await Customer.findById(req.params.id);

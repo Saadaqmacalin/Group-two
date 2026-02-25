@@ -1,9 +1,7 @@
 const Payment = require('../models/payments');
 const Order = require('../models/orders');
 
-// @desc    Add new payment record
-// @route   POST /api/payments
-// @access  Private/Admin
+
 const addPayment = async (req, res) => {
   const { order, amount, paymentMethod, status, transactionId } = req.body;
 
@@ -31,9 +29,7 @@ const addPayment = async (req, res) => {
   }
 };
 
-// @desc    Get all payments
-// @route   GET /api/payments
-// @access  Private/Admin
+
 const getPayments = async (req, res) => {
   try {
     const payments = await Payment.find({}).populate('order');
@@ -43,9 +39,6 @@ const getPayments = async (req, res) => {
   }
 };
 
-// @desc    Get payment by ID
-// @route   GET /api/payments/:id
-// @access  Private/Admin
 const getPaymentById = async (req, res) => {
   try {
     const payment = await Payment.findById(req.params.id).populate('order');

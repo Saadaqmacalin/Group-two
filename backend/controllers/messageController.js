@@ -1,8 +1,6 @@
 const Message = require('../models/message');
 
-// @desc    Send a message
-// @route   POST /api/messages
-// @access  Public
+
 const sendMessage = async (req, res) => {
   const { sender, email, subject, message } = req.body;
 
@@ -20,9 +18,7 @@ const sendMessage = async (req, res) => {
   }
 };
 
-// @desc    Get all messages
-// @route   GET /api/messages
-// @access  Private/Admin
+
 const getMessages = async (req, res) => {
   try {
     const messages = await Message.find({});
@@ -32,9 +28,7 @@ const getMessages = async (req, res) => {
   }
 };
 
-// @desc    Get message by ID
-// @route   GET /api/messages/:id
-// @access  Private/Admin
+
 const getMessageById = async (req, res) => {
   try {
     const message = await Message.findById(req.params.id);
@@ -49,9 +43,7 @@ const getMessageById = async (req, res) => {
   }
 };
 
-// @desc    Delete message
-// @route   DELETE /api/messages/:id
-// @access  Private/Admin
+
 const deleteMessage = async (req, res) => {
   try {
     const message = await Message.findById(req.params.id);
