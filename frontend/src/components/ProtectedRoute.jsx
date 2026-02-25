@@ -13,7 +13,7 @@ const ProtectedRoute = ({ adminOnly = false }) => {
       </div>
     );
   }
-
+  
   if (!user) {
     return <Navigate to="/login" replace />;
   }
