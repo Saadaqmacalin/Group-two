@@ -11,6 +11,7 @@ const createCustomer = async (req, res) => {
       return res.status(400).json({ message: 'Customer already exists' });
     }
 
+    // Customer Waxa lagu diwan galina Name, Email, PhoneNumber, address, City
     const customer = await Customer.create({
       name,
       email,
