@@ -4,6 +4,7 @@ const Message = require('../models/message');
 const sendMessage = async (req, res) => {
   const { sender, email, subject, message } = req.body;
 
+  // Customer Waxoo awodaa inuu isku diwan galiyo Name, Email, Subject, Message
   try {
     const newMessage = await Message.create({
       sender,

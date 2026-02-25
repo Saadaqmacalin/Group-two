@@ -12,6 +12,7 @@ const createCategory = async (req, res) => {
       return res.status(400).json({ message: 'Category already exists' });
     }
 
+      // Catagories Waxoo Yelanaa kaliya Name, Desription, image
     const category = await Category.create({
       name,
       description
