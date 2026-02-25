@@ -2,7 +2,8 @@ const Category = require('../models/category');
 
 
 const createCategory = async (req, res) => {
-  const { name, description, image } = req.body;
+  const { name, description } = req.body;
+  console.log('Creating category:', req.body);
 
   try {
     const categoryExists = await Category.findOne({ name });
@@ -13,12 +14,12 @@ const createCategory = async (req, res) => {
 
     const category = await Category.create({
       name,
-      description,
-      image
+      description
     });
 
     res.status(201).json(category);
   } catch (error) {
+    console.error('Error creating category:', error);
     res.status(500).json({ message: error.message });
   }
 };
@@ -49,7 +50,7 @@ const getCategoryById = async (req, res) => {
 
 
 const updateCategory = async (req, res) => {
-  const { name, description, image } = req.body;
+  const { name, description } = req.body;
 
   try {
     const category = await Category.findById(req.params.id);
@@ -57,7 +58,6 @@ const updateCategory = async (req, res) => {
     if (category) {
       category.name = name || category.name;
       category.description = description || category.description;
-      category.image = image || category.image;
 
       const updatedCategory = await category.save();
       res.json(updatedCategory);
@@ -65,6 +65,7 @@ const updateCategory = async (req, res) => {
       res.status(404).json({ message: 'Category not found' });
     }
   } catch (error) {
+    console.error('Error updating category:', error);
     res.status(500).json({ message: error.message });
   }
 };

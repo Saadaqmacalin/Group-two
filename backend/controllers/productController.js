@@ -6,10 +6,14 @@ const createProduct = async (req, res) => {
     name,
     description,
     price,
-    images,
     category,
     countInStock
   } = req.body;
+
+  let images = [];
+  if (req.file) {
+    images.push(`/uploads/${req.file.filename}`);
+  }
 
   try {
     const product = await Product.create({
@@ -69,7 +73,6 @@ const updateProduct = async (req, res) => {
     name,
     description,
     price,
-    images,
     category,
     countInStock,
     isAvailable
@@ -82,7 +85,11 @@ const updateProduct = async (req, res) => {
       product.name = name || product.name;
       product.description = description || product.description;
       product.price = price !== undefined ? price : product.price;
-      product.images = images || product.images;
+      
+      if (req.file) {
+        product.images = [`/uploads/${req.file.filename}`];
+      }
+
       product.category = category || product.category;
       product.countInStock = countInStock !== undefined ? countInStock : product.countInStock;
       product.isAvailable = isAvailable !== undefined ? isAvailable : product.isAvailable;

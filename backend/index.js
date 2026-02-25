@@ -1,6 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
+const path = require('path');
 const connectDB = require('./db/connectDB');
 const userRouter = require('./routers/userRouter');
 const categoryRouter = require('./routers/categoryRouter');
@@ -10,11 +11,14 @@ const orderRouter = require('./routers/orderRouter');
 const paymentRouter = require('./routers/paymentRouter');
 const messageRouter = require('./routers/messageRouter');
 const salesRouter = require('./routers/salesRouter');
+const dashboardRouter = require('./routers/dashboardRouter');
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
+
+app.use('/uploads', express.static(path.join(__dirname, '/uploads')));
 
 app.use('/api/users', userRouter);
 app.use('/api/categories', categoryRouter);
@@ -24,6 +28,7 @@ app.use('/api/orders', orderRouter);
 app.use('/api/payments', paymentRouter);
 app.use('/api/messages', messageRouter);
 app.use('/api/sales', salesRouter);
+app.use('/api/dashboard', dashboardRouter);
 
 app.get('/', (req, res) => {
   res.send('API is running...');
