@@ -15,7 +15,7 @@ const addPayment = async (req, res) => {
     });
 
     // Update order payment status if payment is completed
-    if (status === 'Completed') {
+    if (payment.status === 'Completed') {
       const orderToUpdate = await Order.findById(order);
       if (orderToUpdate) {
         orderToUpdate.paymentStatus = 'Paid';

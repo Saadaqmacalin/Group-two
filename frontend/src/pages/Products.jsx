@@ -61,7 +61,7 @@ const Products = () => {
         </div>
         <Link 
           to="/products/new"
-          className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2.5 rounded-xl font-semibold shadow-sm transition-all active:scale-95"
+          className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2.5 rounded-xl font-semibold shadow-sm transition-all active:scale-95"
         >
           <Plus className="w-5 h-5" />
           Add Product
@@ -77,7 +77,7 @@ const Products = () => {
               placeholder="Search products..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+              className="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all"
             />
           </div>
         </div>
@@ -85,34 +85,33 @@ const Products = () => {
         <div className="overflow-x-auto">
           {loading ? (
             <div className="py-20 flex flex-col items-center justify-center text-slate-500 gap-3">
-              <Loader2 className="w-10 h-10 animate-spin text-blue-600" />
-              <p className="font-medium">Loading items...</p>
+              <Loader2 className="w-10 h-10 animate-spin text-emerald-600" />
+              <p className="font-medium font-bold text-slate-400 uppercase tracking-widest">Scanning Pantry...</p>
             </div>
           ) : error ? (
-            <div className="py-20 flex flex-col items-center justify-center text-red-500 gap-3">
+            <div className="py-20 flex flex-col items-center justify-center text-rose-500 gap-3">
               <AlertCircle className="w-10 h-10" />
-              <p className="font-medium">{error}</p>
+              <p className="font-black uppercase tracking-tight">{error}</p>
               <button 
                 onClick={fetchProducts}
-                className="text-blue-600 underline text-sm"
+                className="text-emerald-600 font-bold hover:underline text-sm uppercase tracking-widest"
               >
-                Try again
+                Retry
               </button>
             </div>
           ) : filteredProducts.length === 0 ? (
             <div className="py-20 flex flex-col items-center justify-center text-slate-400 gap-3">
               <Package className="w-12 h-12 opacity-20" />
-              <p className="font-medium">No products found</p>
+              <p className="font-bold uppercase tracking-widest text-slate-300">No products found</p>
             </div>
           ) : (
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="bg-slate-50 text-slate-600 text-xs uppercase tracking-wider">
-                  <th className="px-6 py-4 font-semibold">Product</th>
-                  <th className="px-6 py-4 font-semibold">Category</th>
-                  <th className="px-6 py-4 font-semibold">Price</th>
-                  <th className="px-6 py-4 font-semibold">Stock</th>
-                  <th className="px-6 py-4 font-semibold text-right">Actions</th>
+                <tr className="bg-slate-50 text-slate-600 text-[10px] font-black uppercase tracking-widest border-b border-slate-100">
+                  <th className="px-6 py-5">Product</th>
+                  <th className="px-6 py-5">Category</th>
+                  <th className="px-6 py-5">Price</th>
+                  <th className="px-6 py-5">Stock</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
@@ -123,11 +122,11 @@ const Products = () => {
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       exit={{ opacity: 0 }}
-                      className="hover:bg-slate-50/50 transition-colors group"
+                      className="hover:bg-emerald-50/30 transition-colors group"
                     >
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-4">
-                          <div className="w-12 h-12 rounded-lg bg-slate-100 flex-shrink-0 overflow-hidden border border-slate-200">
+                          <div className="w-12 h-12 rounded-xl bg-slate-100 flex-shrink-0 overflow-hidden border border-slate-200 shadow-sm">
                             {product.images && product.images[0] ? (
                               <img 
                                 src={`http://localhost:5000${product.images[0]}`} 
@@ -139,42 +138,26 @@ const Products = () => {
                             )}
                           </div>
                           <div>
-                            <p className="font-semibold text-slate-900">{product.name}</p>
-                            <p className="text-xs text-slate-500 truncate max-w-[200px]">{product.description}</p>
+                            <p className="font-black text-slate-900 group-hover:text-emerald-700 transition-colors">{product.name}</p>
+                            <p className="text-[10px] text-slate-400 font-mono italic">#{product._id.slice(-6).toUpperCase()}</p>
                           </div>
                         </div>
                       </td>
                       <td className="px-6 py-4">
-                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-100 text-slate-700 text-xs font-medium border border-slate-200 uppercase">
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-emerald-50 text-emerald-700 text-[10px] font-black uppercase tracking-wider border border-emerald-100">
                           <Layers className="w-3 h-3" />
                           {product.category?.name || 'Uncategorized'}
                         </span>
                       </td>
                       <td className="px-6 py-4">
-                        <p className="font-bold text-slate-900">${product.price?.toLocaleString()}</p>
+                        <p className="font-black text-slate-900 font-mono">${product.price?.toLocaleString()}</p>
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-2">
-                          <div className={`w-2 h-2 rounded-full ${product.countInStock > 0 ? 'bg-emerald-500' : 'bg-red-500'}`} />
-                          <p className={`text-sm font-medium ${product.countInStock > 0 ? 'text-slate-700' : 'text-red-600'}`}>
-                            {product.countInStock} in stock
+                          <div className={`w-2 h-2 rounded-full ${product.countInStock > 0 ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]' : 'bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.5)]'}`} />
+                          <p className={`text-[10px] font-black uppercase tracking-widest ${product.countInStock > 0 ? 'text-slate-600' : 'text-rose-600'}`}>
+                            {product.countInStock} UNITS LEFT
                           </p>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 text-right">
-                        <div className="flex justify-end gap-2 transition-opacity">
-                          <Link 
-                            to={`/products/edit/${product._id}`}
-                            className="p-2 text-slate-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all"
-                          >
-                            <Edit2 className="w-4 h-4" />
-                          </Link>
-                          <button 
-                            onClick={() => handleDelete(product._id)}
-                            className="p-2 text-slate-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
                         </div>
                       </td>
                     </motion.tr>
@@ -182,7 +165,7 @@ const Products = () => {
                 </AnimatePresence>
               </tbody>
             </table>
-          )}
+          ) }
         </div>
       </div>
     </div>

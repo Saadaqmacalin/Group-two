@@ -122,11 +122,9 @@ const Home = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row justify-between items-end gap-6 mb-16">
             <div>
-              <div className="text-emerald-600 text-xs font-black uppercase tracking-widest flex items-center gap-2 mb-4">
-                <span className="w-10 h-0.5 bg-emerald-600" />
+              <div className="">             
                 Hand-Picked Selection
               </div>
-              <h2 className="text-4xl md:text-5xl font-black text-slate-900 tracking-tight">Freshly Stocked</h2>
             </div>
             <Link 
               to="/products-store" 

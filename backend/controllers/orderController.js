@@ -9,7 +9,8 @@ const createOrder = async (req, res) => {
     shippingAddress,
     totalPrice,
     status,
-    paymentStatus
+    paymentStatus,
+    paymentMethod
   } = req.body;
 
   if (orderItems && orderItems.length === 0) {
@@ -37,7 +38,8 @@ const createOrder = async (req, res) => {
       shippingAddress,
       totalPrice,
       status,
-      paymentStatus
+      paymentStatus,
+      paymentMethod
     });
 
     const createdOrder = await order.save();
@@ -49,7 +51,11 @@ const createOrder = async (req, res) => {
       await product.save();
     }
 
-    res.status(201).json(createdOrder);
+    const populatedOrder = await Order.findById(createdOrder._id)
+      .populate('customer')
+      .populate('orderItems.product');
+
+    res.status(201).json(populatedOrder);
   } catch (error) {
     res.status(400).json({ message: error.message });
   }

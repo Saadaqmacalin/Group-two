@@ -41,6 +41,9 @@ const orderSchema = new mongoose.Schema({
     type: String,
     enum: ['Paid', 'Unpaid'],
     default: 'Unpaid'
+  },
+  paymentMethod: {
+    type: String
   }
 }, {
   timestamps: true

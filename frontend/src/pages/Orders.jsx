@@ -125,7 +125,7 @@ const Orders = () => {
                 onClick={() => setStatusFilter(status)}
                 className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all whitespace-nowrap ${
                   statusFilter === status 
-                  ? 'bg-blue-600 text-white shadow-md shadow-blue-100' 
+                  ? 'bg-emerald-600 text-white shadow-md shadow-emerald-100' 
                   : 'bg-slate-50 text-slate-600 hover:bg-slate-100'
                 }`}
               >
@@ -138,14 +138,14 @@ const Orders = () => {
         <div className="overflow-x-auto">
           {loading ? (
             <div className="py-20 flex flex-col items-center justify-center text-slate-500 gap-3">
-              <Loader2 className="w-10 h-10 animate-spin text-blue-600" />
+              <Loader2 className="w-10 h-10 animate-spin text-emerald-600" />
               <p className="font-medium">Loading orders...</p>
             </div>
           ) : error ? (
-            <div className="py-20 flex flex-col items-center justify-center text-red-500 gap-3">
+            <div className="py-20 flex flex-col items-center justify-center text-rose-500 gap-3">
               <AlertCircle className="w-10 h-10" />
-              <p className="font-medium">{error}</p>
-              <button onClick={fetchOrders} className="text-blue-600 underline text-sm">Try again</button>
+              <p className="font-black uppercase tracking-tight">{error}</p>
+              <button onClick={fetchOrders} className="text-emerald-600 font-bold hover:underline text-sm uppercase tracking-widest">Retry Connection</button>
             </div>
           ) : filteredOrders.length === 0 ? (
             <div className="py-20 flex flex-col items-center justify-center text-slate-400 gap-3">
@@ -175,7 +175,7 @@ const Orders = () => {
                     >
                       <td className="px-6 py-4">
                         <div className="flex flex-col">
-                          <span className="font-mono text-xs font-bold text-blue-600">#{order._id.slice(-6).toUpperCase()}</span>
+                          <span className="font-mono text-xs font-bold text-emerald-600">#{order._id.slice(-6).toUpperCase()}</span>
                           <span className="text-[10px] text-slate-400">{new Date(order.createdAt).toLocaleDateString()}</span>
                         </div>
                       </td>
@@ -208,7 +208,7 @@ const Orders = () => {
                         <div className="flex justify-end gap-2 transition-opacity">
                           <button 
                             onClick={() => setSelectedOrder(order)}
-                            className="p-2 text-slate-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all"
+                            className="p-2 text-slate-600 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-all"
                             title="View Details"
                           >
                             <Eye className="w-4 h-4" />
@@ -244,7 +244,7 @@ const Orders = () => {
               <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
                 <div>
                   <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
-                    <Package className="w-6 h-6 text-blue-600" />
+                    <Package className="w-6 h-6 text-emerald-600" />
                     Order Details
                   </h2>
                   <p className="text-sm text-slate-500 font-mono uppercase tracking-widest mt-0.5">#{selectedOrder._id}</p>
@@ -322,7 +322,7 @@ const Orders = () => {
                   <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider mb-4">Ordered Items</h3>
                   <div className="space-y-3">
                     {selectedOrder.orderItems.map((item, idx) => (
-                      <div key={idx} className="flex items-center justify-between p-4 bg-white border border-slate-100 rounded-2xl shadow-sm hover:border-blue-100 transition-all">
+                      <div key={idx} className="flex items-center justify-between p-4 bg-white border border-slate-100 rounded-2xl shadow-sm hover:border-emerald-100 transition-all">
                         <div className="flex items-center gap-4">
                           <div className="w-12 h-12 bg-slate-50 rounded-xl flex items-center justify-center border border-slate-100 text-slate-400 font-bold">
                             {idx + 1}
@@ -332,7 +332,7 @@ const Orders = () => {
                             <p className="text-xs text-slate-500">Qty: {item.quantity} × ${item.price?.toFixed(2)}</p>
                           </div>
                         </div>
-                        <p className="font-bold text-blue-600">${(item.quantity * item.price).toFixed(2)}</p>
+                        <p className="font-bold text-emerald-600">${(item.quantity * item.price).toFixed(2)}</p>
                       </div>
                     ))}
                   </div>

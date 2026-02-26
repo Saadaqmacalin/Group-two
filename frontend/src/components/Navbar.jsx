@@ -79,7 +79,7 @@ const Navbar = () => {
                     </div>
                     <div className="flex flex-col items-start leading-none">
                       <span className="text-[10px] font-black text-emerald-600 uppercase tracking-widest mb-0.5">
-                        {user?.role === 'admin' ? 'Manager' : (farmer ? 'Farmer' : 'Welcome')}
+                        {user?.role === 'admin' ? 'Admin' : (farmer ? 'Farmer' : 'Welcome')}
                       </span>
                       <span className="text-sm font-black text-slate-900 hidden sm:inline">
                         {user?.name?.split(' ')[0] || farmer?.name?.split(' ')[0] || 'Member'}

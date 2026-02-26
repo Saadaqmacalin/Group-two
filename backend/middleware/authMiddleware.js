@@ -12,20 +12,26 @@ const protect = async (req, res, next) => {
     try {
      
       token = req.headers.authorization.split(' ')[1];
-      console.log(`[AUTH] Verifying token for path: ${req.path}`);
-
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      console.log(`[AUTH] Decoded user ID: ${decoded.id}`);
 
+      // Try to find in User collection first
       req.user = await User.findById(decoded.id).select('-password');
 
+      // If not found in User, check Farmer collection
       if (!req.user) {
-        console.error(`[AUTH] User not found for ID: ${decoded.id}`);
+        req.user = await Farmer.findById(decoded.id).select('-password');
+        if (req.user) {
+          console.log(`[AUTH] Farmer identity detected: ${req.user.email}`);
+        }
+      }
+
+      if (!req.user) {
+        console.error(`[AUTH] No identity found in any collection for ID: ${decoded.id}`);
         res.status(401).json({ message: 'Not authorized, user not found' });
         return;
       }
 
-      console.log(`[AUTH] User authenticated: ${req.user.name} (${req.user.role})`);
+      console.log(`[AUTH] Request authenticated as: ${req.user.email} (Role: ${req.user.role})`);
       next();
     } catch (error) {
       console.error(error);
@@ -41,12 +47,12 @@ const protect = async (req, res, next) => {
 };
 
 const admin = (req, res, next) => {
-  if (req.user && req.user.role === 'admin') {
+  if (req.user && (req.user.role.toLowerCase() === 'admin')) {
     console.log(`[AUTH] Admin access granted to: ${req.user.email}`);
     next();
   } else {
     const role = req.user ? req.user.role : 'none';
-    console.warn(`[AUTH] Admin access DENIED to: ${req.user?.email} (Role: ${role})`);
+    console.warn(`[AUTH] Admin access DENIED to: ${req.user?.email} (Detected Role: ${role})`);
     res.status(401).json({ 
       message: `Not authorized as an admin. Your role is: ${role}`,
       reason: 'role_mismatch',
@@ -57,17 +63,16 @@ const admin = (req, res, next) => {
 };
 
 const staff = (req, res, next) => {
-  if (req.user && (req.user.role === 'admin' || req.user.role === 'staff')) {
-    console.log(`[AUTH] Staff/Admin access granted to: ${req.user.email}`);
+  const userRole = req.user?.role?.toLowerCase() || 'none';
+  if (req.user && (userRole === 'admin' || userRole === 'staff' || userRole === 'farmer')) {
+    console.log(`[AUTH] Authorized access granted to: ${req.user.email} (${userRole})`);
     next();
   } else {
-    const role = req.user ? req.user.role : 'none';
-    console.warn(`[AUTH] Staff access DENIED to: ${req.user?.email} (Role: ${role})`);
+    console.warn(`[AUTH] Access DENIED to: ${req.user?.email} (Role: ${userRole})`);
     res.status(401).json({ 
-      message: `Not authorized as staff or admin. Your role is: ${role}`,
+      message: `Not authorized. Your role is: ${userRole}. Only staff, admin or verified farmers allowed.`,
       reason: 'role_mismatch',
-      required: 'staff_or_admin',
-      current: role
+      current: userRole
     });
   }
 };

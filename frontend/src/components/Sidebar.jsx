@@ -39,8 +39,8 @@ const Sidebar = () => {
     <aside className="fixed left-0 top-0 h-screen w-64 bg-white border-r border-slate-200 flex flex-col z-20 transition-all duration-300">
       <div className="p-6">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-            <span className="text-white font-bold text-xl">E</span>
+          <div className="w-8 h-8 bg-emerald-600 rounded-lg flex items-center justify-center">
+            <span className="text-white font-bold text-xl">FM</span>
           </div>
           <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-slate-900 to-slate-700">
             Store Admin
@@ -56,14 +56,14 @@ const Sidebar = () => {
             className={({ isActive }) => `
               group flex items-center justify-between px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200
               ${isActive 
-                ? 'bg-blue-50 text-blue-600 shadow-sm' 
-                : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'}
+                ? 'bg-emerald-50 text-emerald-600 shadow-sm' 
+                : 'text-slate-600 hover:bg-emerald-50/10 hover:text-emerald-900'}
             `}
           >
             <div className="flex items-center gap-3">
               <item.icon className={`w-5 h-5 transition-colors ${
                 // Custom color handling if needed
-                'group-hover:text-blue-600'
+                'group-hover:text-emerald-600'
               }`} />
               <span>{item.name}</span>
             </div>
@@ -74,7 +74,7 @@ const Sidebar = () => {
 
       <div className="p-4 border-t border-slate-100">
         <div className="bg-slate-50 rounded-2xl p-4 flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 font-bold uppercase">
+          <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-700 font-bold uppercase">
             {user?.name?.charAt(0) || 'U'}
           </div>
           <div className="flex-1 overflow-hidden">

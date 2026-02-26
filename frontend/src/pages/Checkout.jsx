@@ -26,6 +26,7 @@ const Checkout = () => {
 
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [orderResult, setOrderResult] = useState(null);
   const [error, setError] = useState('');
 
   const [formData, setFormData] = useState({
@@ -40,8 +41,7 @@ const Checkout = () => {
   const paymentMethods = [
     { id: 'EVC Plus', name: 'EVC Plus (Hormuud)', description: 'Fast and secure mobile payment' },
     { id: 'eDahab', name: 'eDahab (Somtel)', description: 'Reliable mobile wallet transfer' },
-    { id: 'Sahal', name: 'Sahal (Golis)', description: 'Puntland region mobile payment' },
-    { id: 'Cash on Delivery', name: 'Cash on Delivery', description: 'Pay when you receive your items' }
+    { id: 'Sahal', name: 'Sahal (Golis)', description: 'Puntland region mobile payment' }
   ];
 
   React.useEffect(() => {
@@ -92,19 +92,21 @@ const Checkout = () => {
         })),
         shippingAddress: `${formData.address}, ${formData.city}`,
         totalPrice: cartTotal,
-        status: 'Pending',
-        paymentStatus: formData.paymentMethod === 'Cash on Delivery' ? 'Unpaid' : 'Unpaid' // In a real app, integrate payment gateway here
+        paymentMethod: formData.paymentMethod,
+        status: 'Processing',
+        paymentStatus: 'Paid'
       };
 
-      await api.post('/orders', orderData);
+      const { data: savedOrder } = await api.post('/orders', orderData);
       
+      setOrderResult(savedOrder);
       setSuccess(true);
       clearCart();
       
-      // Auto redirect after 5 seconds
-      setTimeout(() => {
-        navigate('/');
-      }, 5000);
+      // Remove auto redirect to allow receipt viewing
+      // setTimeout(() => {
+      //   navigate('/');
+      // }, 5000);
 
     } catch (err) {
       console.error('Checkout error:', err);
@@ -114,30 +116,139 @@ const Checkout = () => {
     }
   };
 
-  if (success) {
+  if (success && orderResult) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-white p-4">
-        <motion.div 
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="max-w-md w-full text-center space-y-8 p-12 bg-emerald-50 rounded-[3rem] border border-emerald-100 shadow-2xl shadow-emerald-50"
-        >
-          <div className="w-24 h-24 bg-emerald-600 rounded-full flex items-center justify-center text-white mx-auto shadow-xl shadow-emerald-200">
-            <CheckCircle2 className="w-12 h-12" />
+      <div className="min-h-screen bg-slate-50 pt-32 pb-20 print:p-0 print:pt-0">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div 
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-white rounded-[3.5rem] border border-emerald-50 shadow-2xl shadow-emerald-100 overflow-hidden print:shadow-none print:border-none print:rounded-none"
+          >
+            {/* Receipt Header */}
+            <div className="bg-gradient-to-br from-emerald-600 to-emerald-500 p-12 text-white text-center relative overflow-hidden print:bg-none print:text-slate-900 print:p-8">
+              <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 blur-[80px] -mr-32 -mt-32" />
+              <div className="relative z-10 space-y-4">
+                <div className="w-20 h-20 bg-white/20 backdrop-blur-md rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-xl print:hidden">
+                  <CheckCircle2 className="w-10 h-10 text-white" />
+                </div>
+                <h1 className="text-4xl font-black tracking-tight uppercase print:text-2xl">Purchase Receipt</h1>
+                <p className="text-emerald-50/80 font-bold uppercase tracking-[0.2em] text-xs">FreshMart Daily Pantry</p>
+              </div>
+            </div>
+
+            {/* Receipt Content */}
+            <div className="p-12 space-y-12 print:p-8 print:space-y-8">
+              {/* Order Meta */}
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 pb-10 border-b border-slate-100 print:gap-4 print:pb-6">
+                <div className="space-y-1">
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Order ID</p>
+                  <p className="font-black text-slate-900 text-sm">#{orderResult._id?.slice(-8).toUpperCase()}</p>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Date</p>
+                  <p className="font-black text-slate-900 text-sm">{new Date(orderResult.createdAt).toLocaleDateString()}</p>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Time</p>
+                  <p className="font-black text-slate-900 text-sm">{new Date(orderResult.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Payment</p>
+                  <p className="font-black text-emerald-600 text-sm">{orderResult.paymentMethod}</p>
+                </div>
+              </div>
+
+              {/* Items List */}
+              <div className="space-y-8">
+                <h3 className="text-sm font-black text-slate-900 uppercase tracking-widest flex items-center gap-3">
+                  <Leaf className="w-5 h-5 text-emerald-500" />
+                  Itemized Basket
+                </h3>
+                <div className="space-y-6">
+                  {orderResult.orderItems?.map((item, idx) => (
+                    <div key={idx} className="flex items-center gap-6 group">
+                      <div className="w-16 h-16 bg-slate-50 rounded-2xl border border-slate-100 flex-shrink-0 overflow-hidden">
+                        {item.product?.images?.[0] ? (
+                          <img 
+                            src={`http://localhost:5000${item.product.images[0]}`} 
+                            alt={item.product?.name} 
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-slate-200">
+                            <Leaf className="w-6 h-6" />
+                          </div>
+                        )}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-black text-slate-900 text-sm truncate">{item.product?.name || 'Fresh Item'}</p>
+                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Qty: {item.quantity} × ${item.price?.toLocaleString()}</p>
+                      </div>
+                      <p className="font-black text-slate-900 text-base">${(item.price * item.quantity).toLocaleString()}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Totals */}
+              <div className="bg-slate-50 p-10 rounded-[2.5rem] space-y-4 print:bg-none print:p-0 print:border-t print:pt-6">
+                <div className="flex justify-between items-center">
+                  <span className="text-xs font-black text-slate-400 uppercase tracking-widest">Gross Total</span>
+                  <span className="font-black text-slate-900">${orderResult.totalPrice?.toLocaleString()}</span>
+                </div>
+                <div className="flex justify-between items-center text-emerald-600">
+                  <span className="text-xs font-black uppercase tracking-widest">Delivery Fee</span>
+                  <span className="font-black text-sm uppercase">Complimentary</span>
+                </div>
+                <div className="pt-4 mt-4 border-t border-slate-200 flex justify-between items-center">
+                  <span className="text-base font-black text-slate-900 uppercase tracking-tighter">Amount Paid</span>
+                  <span className="text-3xl font-black text-emerald-600 leading-none">${orderResult.totalPrice?.toLocaleString()}</span>
+                </div>
+              </div>
+
+              {/* Customer Info */}
+              <div className="pt-8 border-t border-slate-100 flex flex-col md:flex-row justify-between gap-8 print:flex-row">
+                <div className="space-y-2">
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Delivered To</p>
+                  <p className="font-black text-slate-900 text-sm leading-tight max-w-[200px]">
+                    {orderResult.customer?.name}<br />
+                    {orderResult.shippingAddress}
+                  </p>
+                </div>
+                <div className="md:text-right print:text-right">
+                  <p className="text-[10px] font-black text-emerald-600/60 uppercase tracking-widest mb-2">Merchant Guarantee</p>
+                  <div className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-100 rounded-xl text-emerald-700 text-[10px] font-black uppercase tracking-widest ring-1 ring-emerald-200">
+                    <ShieldCheck className="w-3.5 h-3.5" />
+                    Verified Freshness
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Receipt Footer Actions */}
+            <div className="p-10 bg-slate-50/50 border-t border-slate-100 flex flex-col sm:flex-row gap-4 print:hidden">
+              <button 
+                onClick={() => window.print()}
+                className="flex-1 py-5 bg-white border-2 border-slate-200 rounded-2xl font-black uppercase tracking-widest text-xs flex items-center justify-center gap-3 hover:border-emerald-500 hover:text-emerald-600 transition-all shadow-sm"
+              >
+                Save Receipt
+              </button>
+              <Link 
+                to="/" 
+                className="flex-1 py-5 bg-slate-900 text-white rounded-2xl font-black uppercase tracking-widest text-xs flex items-center justify-center gap-3 hover:bg-emerald-600 transition-all shadow-lg"
+              >
+                Back to Pantry
+                <ArrowRight className="w-4 h-4" />
+              </Link>
+            </div>
+          </motion.div>
+          
+          <div className="mt-10 text-center space-y-2 print:hidden">
+            <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em]">Thank you for shopping at FreshMart</p>
+            <p className="text-[10px] font-black text-slate-300">Sustainable Produce • Fair Farmer Pricing • Direct Delivery</p>
           </div>
-          <div className="space-y-3">
-            <h1 className="text-4xl font-black text-slate-900 tracking-tight">Fresh Order Received!</h1>
-            <p className="text-slate-500 font-medium leading-relaxed">
-              Success! We've received your order and our pickers are already selecting the finest produce for you.
-            </p>
-          </div>
-          <div className="pt-4 space-y-4">
-            <Link to="/" className="block w-full py-4 bg-slate-900 text-white rounded-2xl font-black uppercase tracking-widest hover:bg-emerald-600 transition-all shadow-lg shadow-slate-200">
-              Return to Store
-            </Link>
-            <p className="text-xs text-slate-400 font-bold uppercase tracking-widest">Redirecting in 5 seconds...</p>
-          </div>
-        </motion.div>
+        </div>
       </div>
     );
   }
@@ -151,7 +262,7 @@ const Checkout = () => {
         </Link>
         
         <div className="flex flex-col md:flex-row justify-between items-baseline gap-4 mb-12">
-            <h1 className="text-5xl font-black text-slate-900 tracking-tight">Final Check</h1>
+            <h1 className="text-5xl font-black bg-clip-text text-transparent bg-gradient-to-r from-slate-900 via-emerald-800 to-emerald-600 tracking-tight">Final Check</h1>
             <div className="flex items-center gap-2 px-4 py-2 bg-emerald-100 text-emerald-700 rounded-xl text-xs font-black uppercase tracking-widest ring-1 ring-emerald-200">
                 <CheckCircle2 className="w-4 h-4" />
                 Safe & Secure Gateway
@@ -251,7 +362,7 @@ const Checkout = () => {
               {/* Payment Methods */}
               <div className="bg-white p-10 rounded-[3rem] border border-emerald-50 shadow-sm space-y-10">
                 <div className="flex items-center gap-4 border-b border-emerald-50 pb-8">
-                  <div className="w-14 h-14 bg-emerald-50 rounded-2xl flex items-center justify-center text-emerald-600 ring-8 ring-emerald-50/50 shadow-inner">
+                  <div className="w-15 h-15 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-2xl flex items-center justify-center text-white ring-8 ring-emerald-50 shadow-xl shadow-emerald-100">
                     <CreditCard className="w-7 h-7" />
                   </div>
                   <div>
@@ -265,21 +376,33 @@ const Checkout = () => {
                     <div 
                       key={method.id}
                       onClick={() => setFormData({...formData, paymentMethod: method.id})}
-                      className={`cursor-pointer p-8 rounded-[2rem] border-2 transition-all flex items-center justify-between group ${
+                      className={`cursor-pointer p-8 rounded-[2.5rem] border-2 transition-all flex items-center justify-between group relative overflow-hidden ${
                         formData.paymentMethod === method.id 
-                        ? 'border-emerald-500 bg-emerald-50/50 shadow-xl shadow-emerald-50' 
-                        : 'border-slate-50 hover:border-emerald-100 hover:bg-emerald-50/20'
+                        ? 'border-transparent bg-gradient-to-br from-emerald-600 to-emerald-500 text-white shadow-2xl shadow-emerald-200 scale-[1.02]' 
+                        : 'border-slate-100 hover:border-emerald-200 bg-white hover:bg-emerald-50/10'
                       }`}
                     >
-                      <div className="flex items-center gap-5">
-                        <div className={`w-7 h-7 rounded-full border-2 flex items-center justify-center transition-all ${
-                          formData.paymentMethod === method.id ? 'border-emerald-600 scale-110' : 'border-slate-200 group-hover:border-emerald-300'
+                      {/* Decorative elements for selected state */}
+                      {formData.paymentMethod === method.id && (
+                        <>
+                          <div className="absolute top-0 right-0 w-40 h-40 bg-white/20 blur-[50px] -mr-16 -mt-16 animate-pulse" />
+                          <div className="absolute bottom-0 left-0 w-32 h-32 bg-emerald-400/20 blur-3xl -ml-10 -mb-10" />
+                        </>
+                      )}
+
+                      <div className="flex items-center gap-6 relative z-10">
+                        <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center transition-all ${
+                          formData.paymentMethod === method.id ? 'border-white bg-white/20' : 'border-slate-200 group-hover:border-emerald-300'
                         }`}>
-                          {formData.paymentMethod === method.id && <div className="w-3.5 h-3.5 bg-emerald-600 rounded-full" />}
+                          {formData.paymentMethod === method.id && <div className="w-4 h-4 bg-white rounded-full shadow-lg" />}
                         </div>
                         <div>
-                          <p className="font-black text-slate-900 text-base leading-none mb-1.5">{method.name}</p>
-                          <p className="text-[10px] text-slate-500 font-bold uppercase tracking-tight">{method.description}</p>
+                          <p className={`font-black text-lg leading-none mb-2 transition-colors ${
+                            formData.paymentMethod === method.id ? 'text-white' : 'text-slate-900'
+                          }`}>{method.name}</p>
+                          <p className={`text-[11px] font-bold uppercase tracking-wide transition-colors ${
+                            formData.paymentMethod === method.id ? 'text-emerald-50/80' : 'text-slate-400'
+                          }`}>{method.description}</p>
                         </div>
                       </div>
                     </div>
@@ -303,7 +426,7 @@ const Checkout = () => {
               <button 
                 type="submit"
                 disabled={loading}
-                className="w-full py-7 bg-slate-900 text-white rounded-[2.5rem] font-black uppercase tracking-widest text-xl flex items-center justify-center gap-4 hover:bg-emerald-600 transition-all shadow-2xl shadow-slate-200 active:scale-[0.98] group"
+                className="w-full py-7 bg-gradient-to-r from-slate-900 to-slate-800 text-white rounded-[2.5rem] font-black uppercase tracking-widest text-xl flex items-center justify-center gap-4 hover:from-emerald-600 hover:to-emerald-500 transition-all shadow-2xl shadow-slate-200 active:scale-[0.98] group"
               >
                 {loading ? <Loader2 className="w-7 h-7 animate-spin" /> : (
                     <>
