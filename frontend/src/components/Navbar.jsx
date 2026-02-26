@@ -26,8 +26,8 @@ const Navbar = () => {
             <div className="w-10 h-10 bg-gradient-to-br from-emerald-500 to-green-600 rounded-xl flex items-center justify-center shadow-lg shadow-emerald-200 group-hover:scale-105 transition-transform">
               <Leaf className="text-white w-6 h-6" />
             </div>
-            <span className="text-2xl font-black text-slate-900 tracking-tight">
-              Fresh<span className="text-emerald-600">Mart</span>
+            <span className="text-2xl font-black text-emerald-600 tracking-tight">
+              Fresh<span className="text-emerald-600"></span>
             </span>
           </Link>
 
